@@ -3,7 +3,7 @@ const cros = require('cors');
 require(`dotenv`).config();
 const app = express();
 const port = process.env.PROT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // midelware
 app.use(cros());
@@ -34,12 +34,18 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
-
     app.post('/car', async (req, res) => {
         const newCar = req.body;
         console.log(newCar);
         const result = await carCollection.insertOne(newCar);
         res.send(result);
+    })
+
+    app.get('/car/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query  = {_id: new ObjectId(id)};
+      const result = await carCollection.findOne(query);
+      res.send(result);
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
