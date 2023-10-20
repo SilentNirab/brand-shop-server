@@ -34,6 +34,14 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
+
+      app.get('/car/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query  = {_id: new ObjectId(id)};
+      const result = await carCollection.findOne(query);
+      res.send(result);
+      })
+
     app.post('/car', async (req, res) => {
         const newCar = req.body;
         console.log(newCar);
@@ -43,10 +51,25 @@ async function run() {
 
     app.get('/car/:id', async(req, res) =>{
       const id = req.params.id;
-      const query  = {_id: new ObjectId(id)};
-      const result = await carCollection.findOne(query);
+      const filter  = {_id: new ObjectId(id)};
+      const options = {upsert: true};
+      const updatedCar = req.body;
+      const car = {
+          $set: {
+            image: updatedCar.image,
+            name: updatedCar.name,
+            brand: updatedCar.brand,
+            type: updatedCar.type,
+            price: updatedCar.price,
+            description: updatedCar.description,
+            rating: updatedCar.rating,
+          }
+      }
+      const result = await carCollection.updateOne(filter, car, options);
       res.send(result);
     })
+    
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
