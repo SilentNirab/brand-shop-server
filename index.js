@@ -49,7 +49,7 @@ async function run() {
         res.send(result);
     })
 
-    app.get('/car/:id', async(req, res) =>{
+    app.put('/car/:id', async(req, res) =>{
       const id = req.params.id;
       const filter  = {_id: new ObjectId(id)};
       const options = {upsert: true};
